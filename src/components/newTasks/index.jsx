@@ -32,8 +32,8 @@ function NewTasks({ getData }) {
       });
 
       const requests = subTasks.map( task => {
-        return api.post("/task", {
-          tarefa: task.task,
+        return api.post("/subtask", {
+          subtarefa: task.subtask,
           checked: task.checked,
           taskId: Number(id),  
         });
