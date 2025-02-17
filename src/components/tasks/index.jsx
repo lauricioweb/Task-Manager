@@ -11,7 +11,7 @@ import {
   SubContainerTasks,
 } from "./styles";
 
-import { FaPencilAlt, FaTrash } from "react-icons/fa";
+import { FaArrowAltCircleDown, FaArrowDown, FaPencilAlt, FaTrash } from "react-icons/fa";
 import { StyledButtons } from "../../global/styles";
 import { useNavigate } from "react-router-dom";
 import { parseCookies } from "nookies";
@@ -208,14 +208,21 @@ function Tasks() {
                 <p textstyle={task.checked ? "line-through" : "line-through"}>
                   {task.tarefa}
                 </p>
+               
+                <StyledButtons onClick={() => showModalEdit(task.id)}>
+                  <FaArrowDown />
+                </StyledButtons>
+
                 <StyledButtons onClick={() => showModalEdit(task.id)}>
                   <FaPencilAlt />
                 </StyledButtons>
+               
                 <StyledButtons onClick={() => showModal(task.id)}>
                   <FaTrash />
                 </StyledButtons>
               </StyledLabel>
             </StyledTasks>
+            
           ))
         )}
       </SubContainerTasks>

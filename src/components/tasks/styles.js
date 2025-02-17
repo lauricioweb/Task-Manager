@@ -2,10 +2,11 @@ import styled from "styled-components";
 
 export const ContainerTasks = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding-top: 100px;
 
   @media screen and (max-width: 460px) {
     padding: 0px 0px;

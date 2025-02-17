@@ -6,7 +6,7 @@ export const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    background: #14141c;
+    background:rgb(0, 0, 0);
     font-family:Arial, Helvetica, sans-serif;
       
   h1,h2,h3,h4{

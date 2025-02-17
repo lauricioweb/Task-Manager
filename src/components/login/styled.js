@@ -7,6 +7,7 @@ export const ContainerLogin = styled.div`
   align-items: center;
   justify-content: center;
 
+
   @media screen and (max-width: 460px) {
     padding: 0px 10px;
   }
@@ -14,6 +15,7 @@ export const ContainerLogin = styled.div`
 
 export const ContainerForm = styled.form`
   width: 100%;
+  background-color:rgba(0, 0, 0, 0.81);
   max-width: 400px;
   border: 1px solid #32c988;
   display: flex;
