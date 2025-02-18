@@ -6,7 +6,7 @@ import api from "../../api/api";
 import { parseCookies } from "nookies";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
+import { FaPencilAlt, FaPlus, FaTrashAlt } from "react-icons/fa";
 
 function NewTasks({ getData }) {
   const navigate = useNavigate();
@@ -35,12 +35,12 @@ function NewTasks({ getData }) {
         return api.post("/subtask", {
           subtarefa: task.subtask,
           checked: task.checked,
-          taskId: Number(id),  
+          taskId: Number(data.id),  
         });
       });
 
       await Promise.all(requests);
-
+ 
       toast.success("Tarefa criada com sucesso", {
         position: "top-center",
         autoClose: 500,
@@ -52,6 +52,7 @@ function NewTasks({ getData }) {
         theme: "dark",
       });
       setTask("");
+      setSubtasks([]);
       getData();
       setModalOn(false);
     } catch (error) {
@@ -92,7 +93,8 @@ function NewTasks({ getData }) {
               <SubTasks key={index}>
                 <input type="checkbox"  name="" id="" />
                 <p>{task.subtask}</p>
-                <StyledButtons><FaPlus/></StyledButtons>
+                <StyledButtons><FaPencilAlt/></StyledButtons>
+                <StyledButtons><FaTrashAlt/></StyledButtons>
               </SubTasks>
             ))
           }

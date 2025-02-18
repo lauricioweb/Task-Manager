@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import api from "../../api/api";
 import {
+  CloseModalButton,
   ContainerButtonsStyled,
+  ContainerSubtasks,
   ContainerTasks,
+  ContainerTaskView,
   ModalContainerSyled,
   ModalDelete,
+  ModalInfo,
   StyledLabel,
   StyledMsg,
   StyledTasks,
   SubContainerTasks,
+  SubTasks,
 } from "./styles";
 
-import { FaArrowAltCircleDown, FaArrowDown, FaPencilAlt, FaTrash } from "react-icons/fa";
+import { FaInfo, FaPencilAlt, FaTimes, FaTrash } from "react-icons/fa";
 import { StyledButtons } from "../../global/styles";
 import { useNavigate } from "react-router-dom";
 import { parseCookies } from "nookies";
@@ -20,16 +25,20 @@ import { toast } from "react-toastify";
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
+  const [subTasks, setSubTasks] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [filteredSubTasks, setFilteredSubTasks] = useState([]);
   const [confirmEdit, setConfirmEdit] = useState(false);
   const [taskId, setTaskId] = useState(null);
   const [taskEdit, setTaskEdit] = useState(null);
+  const [taskView, setTaskView] = useState("");
+  const [modalInfo, setModalInfo] = useState(false);
   const navigate = useNavigate();
   const { ["userId"]: id } = parseCookies();
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [filteredSubTasks]);
 
   function showModal(idTask) {
     setTaskId(idTask);
@@ -87,9 +96,10 @@ function Tasks() {
 
   async function getData() {
     try {
-      const { data } = await api.get(`/task/${id}`);
-      console.log(data);
+      const response = await api.get("/subtask");
+      const { data } = (await api.get(`/task/${id}`));
       setTasks(data);
+      setSubTasks(response.data);
     } catch (error) {
       console.log(error);
       navigate("/login");
@@ -98,6 +108,14 @@ function Tasks() {
 
   async function loadData() {
     setTasks(tasks);
+  }
+
+  function filterSubtasks(id){
+    const subTasksFiltered = subTasks.filter((subTask) => subTask.taskId == id);
+    const taskFiltered = tasks.filter((task) => task.id == id );
+    setTaskView(taskFiltered[0].tarefa);
+    setFilteredSubTasks(subTasksFiltered);
+    setModalInfo(true);
   }
 
   async function handleDeleteTask(id) {
@@ -158,6 +176,23 @@ function Tasks() {
 
   return (
     <ContainerTasks>
+
+
+      <ModalInfo display={ modalInfo ? "flex" : "none"}>
+        <CloseModalButton onClick={() => setModalInfo(false)}>
+        <FaTimes size={15} />
+        </CloseModalButton>
+        <ContainerTaskView>
+           <p>{taskView}</p>  
+          <ContainerSubtasks>
+            {
+              filteredSubTasks.map((subTask) => (
+                <SubTasks>  <input type="checkbox"/> <span> {subTask.subtarefa}</span></SubTasks>
+            ))}
+          </ContainerSubtasks>         
+        </ContainerTaskView>
+      </ModalInfo>
+
       <ModalDelete display={confirmDelete ? "block" : "none"}>
         <p>Deseja realmente deletar esta tarefa?</p>
         <ContainerButtonsStyled>
@@ -209,8 +244,8 @@ function Tasks() {
                   {task.tarefa}
                 </p>
                
-                <StyledButtons onClick={() => showModalEdit(task.id)}>
-                  <FaArrowDown />
+                <StyledButtons onClick={() => filterSubtasks(task.id)}>
+                  <FaInfo/>
                 </StyledButtons>
 
                 <StyledButtons onClick={() => showModalEdit(task.id)}>

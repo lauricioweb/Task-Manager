@@ -89,11 +89,76 @@ export const ModalDelete = styled.div`
   }
 `;
 
+export const ModalInfo = styled.div`
+  width: 700px;
+  height: 520px;
+  background-color: #172534;
+  position: absolute;
+  top: 90px;
+  display: ${(props) => props.display};
+
+`;
+
+export const CloseModalButton = styled.button`
+cursor: pointer;
+position: absolute;
+background-color: red;
+top: 10px;
+right: 10px;
+
+ border: 0px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #000;
+  background-color: #72a988;
+  border-radius: 2px;
+
+  &:hover {
+    background-color: #72c988;
+  }
+`;
+
 export const ContainerButtonsStyled = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+
+`;
+
+export const SubTasks = styled.label`
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  gap:10px;
+  border-bottom: 1px solid #32c98840;
+  color:rgb(7, 173, 101);
+
+  span{
+     align-self: center;
+  }
+
+`;
+
+export const ContainerTaskView = styled.div`
+width: 100%;
+display: flex;
+flex-direction: column;
+text-align: center;
+gap: 1px; 
+
+p{
+  font-size: 30px;
+}
+`;
+
+
+export const ContainerSubtasks = styled.div`
+width: 100%;
+display: flex;
+align-items: center;
+flex-direction: column;
+gap: 10px;
 `;
 
 
