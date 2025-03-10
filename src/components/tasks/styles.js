@@ -168,7 +168,8 @@ export const ModalContainerSyled = styled.div`
   border-radius:10px;
 
   top:100px;
-  height:150px;
+  height:100%;
+  max-height:400px;
   width:380px;
   padding:5px;
   display:${(props) => props.display};

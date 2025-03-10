@@ -47,10 +47,10 @@ function Tasks() {
 
   async function showModalEdit(idTask) {
       setTaskId(idTask);
-     setConfirmEdit(true);
-     const task = await getTaskById(idTask);
-     const mytask = task.filter((task) => task.id == idTask);
-     console.log(task)
+      setConfirmEdit(true);
+      const task = await getTaskById(idTask);
+      const mytask = task.filter((task) => task.id == idTask)
+      filterSubtasks(idTask)
     setTaskEdit(mytask[0].tarefa);
   }
 
@@ -102,6 +102,7 @@ function Tasks() {
       setSubTasks(response.data);
     } catch (error) {
       console.log(error);
+      console.log("erro ao pegar dados do usuario")
       navigate("/login");
     }
   }
@@ -115,6 +116,10 @@ function Tasks() {
     const taskFiltered = tasks.filter((task) => task.id == id );
     setTaskView(taskFiltered[0].tarefa);
     setFilteredSubTasks(subTasksFiltered);
+  }
+
+  function showFiltered(id){
+    filterSubtasks(id)
     setModalInfo(true);
   }
 
@@ -151,6 +156,13 @@ function Tasks() {
       window.location.href = "/login";
     }
   }
+  const handleChangeSubTasks = (index, event) => {
+    const newSubTarefas = [...filteredSubTasks];
+    newSubTarefas[index].subtarefa = event.target.value;
+    console.log(newSubTarefas)
+    setFilteredSubTasks(newSubTarefas);
+  };
+
 
   async function handleCheckTask(id, checked) {
     try {
@@ -210,6 +222,13 @@ function Tasks() {
           onChange={(task) => setTaskEdit(task.target.value)}
           value={taskEdit}
         ></textarea>
+          { 
+            filteredSubTasks.map((subTask, index) => (
+            <input 
+            type="text" 
+            value={subTask.subtarefa} 
+            onChange={(event) => handleChangeSubTasks(index,event)} />
+        ))  }
         <ContainerButtonsStyled>
           <StyledButtons onClick={() => updateTask(taskId)}>
             Salvar
@@ -244,7 +263,7 @@ function Tasks() {
                   {task.tarefa}
                 </p>
                
-                <StyledButtons onClick={() => filterSubtasks(task.id)}>
+                <StyledButtons onClick={() => showFiltered(task.id)}>
                   <FaInfo/>
                 </StyledButtons>
 
