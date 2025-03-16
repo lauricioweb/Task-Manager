@@ -16,7 +16,7 @@ import {
   SubTasks,
 } from "./styles";
 
-import { FaInfo, FaPencilAlt, FaTimes, FaTrash } from "react-icons/fa";
+import { FaInfo, FaPencilAlt, FaTimes, FaTrash, FaTrashAlt } from "react-icons/fa";
 import { StyledButtons } from "../../global/styles";
 import { useNavigate } from "react-router-dom";
 import { parseCookies } from "nookies";
@@ -38,7 +38,7 @@ function Tasks() {
 
   useEffect(() => {
     getData();
-  }, [filteredSubTasks]);
+  }, [filteredSubTasks,tasks]);
 
   function showModal(idTask) {
     setTaskId(idTask);
@@ -56,9 +56,21 @@ function Tasks() {
 
   async function updateTask(id) {
     try {
+      //atualiza a tarefa
       const { data } = await api.put(`/task/${id}`, {
         tarefa: taskEdit,
       });
+      
+
+      // atualizando subtarefas
+    const updateRequests = filteredSubTasks.map(subtask =>
+      api.put(`/subtask/${subtask.id}`, {
+        subtarefa: subtask.subtarefa,
+      }) 
+    );
+
+    // Aguarda todas as requisições serem concluídas
+    await Promise.all(updateRequests);
 
       const taskUpdate = tasks.map((task) =>
         task.id == id
@@ -68,6 +80,8 @@ function Tasks() {
             }
           : task
       );
+
+
       setTasks(taskUpdate);
       toast.success("Tarefa atualizada com sucesso!", {
         position: "top-center",
@@ -122,6 +136,17 @@ function Tasks() {
     filterSubtasks(id)
     setModalInfo(true);
   }
+  
+  async function handleDeleteSubTask(id){
+    try{
+      const {data} = await api.delete(`/subtask/${id}`)
+      const newSubTasks = filteredSubTasks.filter((_, index) => index !== id)
+      setFilteredSubTasks(newSubTasks)
+      
+    }catch(error){
+      console.log(error)
+    }
+  }
 
   async function handleDeleteTask(id) {
     try {
@@ -156,13 +181,12 @@ function Tasks() {
       window.location.href = "/login";
     }
   }
+
   const handleChangeSubTasks = (index, event) => {
     const newSubTarefas = [...filteredSubTasks];
     newSubTarefas[index].subtarefa = event.target.value;
-    console.log(newSubTarefas)
     setFilteredSubTasks(newSubTarefas);
   };
-
 
   async function handleCheckTask(id, checked) {
     try {
@@ -184,22 +208,18 @@ function Tasks() {
     }
   }
 
-  //lauricio esteve aqui
-
   return (
     <ContainerTasks>
-
-
       <ModalInfo display={ modalInfo ? "flex" : "none"}>
         <CloseModalButton onClick={() => setModalInfo(false)}>
         <FaTimes size={15} />
         </CloseModalButton>
         <ContainerTaskView>
-           <p>{taskView}</p>  
+            <p>{taskView}</p>  
           <ContainerSubtasks>
             {
               filteredSubTasks.map((subTask) => (
-                <SubTasks>  <input type="checkbox"/> <span> {subTask.subtarefa}</span></SubTasks>
+                <SubTasks>  <input type="checkbox"/> <span> {subTask.subtarefa}</span> </SubTasks>
             ))}
           </ContainerSubtasks>         
         </ContainerTaskView>
@@ -224,10 +244,16 @@ function Tasks() {
         ></textarea>
           { 
             filteredSubTasks.map((subTask, index) => (
-            <input 
-            type="text" 
-            value={subTask.subtarefa} 
-            onChange={(event) => handleChangeSubTasks(index,event)} />
+            <div>
+              <input 
+              type="text" 
+              value={subTask.subtarefa} 
+              onChange={(event) => handleChangeSubTasks(index,event)} />
+              <StyledButtons onClick={() => handleDeleteSubTask(subTask.id)}>
+                <FaTrashAlt/>
+                <p>{subTask.id}</p>
+              </StyledButtons>
+            </div>
         ))  }
         <ContainerButtonsStyled>
           <StyledButtons onClick={() => updateTask(taskId)}>
@@ -262,7 +288,6 @@ function Tasks() {
                 <p textstyle={task.checked ? "line-through" : "line-through"}>
                   {task.tarefa}
                 </p>
-               
                 <StyledButtons onClick={() => showFiltered(task.id)}>
                   <FaInfo/>
                 </StyledButtons>
@@ -270,7 +295,6 @@ function Tasks() {
                 <StyledButtons onClick={() => showModalEdit(task.id)}>
                   <FaPencilAlt />
                 </StyledButtons>
-               
                 <StyledButtons onClick={() => showModal(task.id)}>
                   <FaTrash />
                 </StyledButtons>

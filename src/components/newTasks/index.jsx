@@ -23,6 +23,11 @@ function NewTasks({ getData }) {
     setValueSubTask("");
   }
 
+  function deleteSubTasks(id){
+    const newSubTasks = subTasks.filter((_, index) => index !== id)
+    setSubtasks(newSubTasks)
+  }
+
   async function handleNewTask() {
     try {
       const { data } = await api.post("/task", {
@@ -40,7 +45,7 @@ function NewTasks({ getData }) {
       });
 
       await Promise.all(requests);
- 
+
       toast.success("Tarefa criada com sucesso", {
         position: "top-center",
         autoClose: 500,
@@ -79,26 +84,24 @@ function NewTasks({ getData }) {
           value={task}
         ></textarea>
         <p>Defina subtarefas</p>
-     
-         <Step>
+          <Step>
           <textarea placeholder="Passo 1" onChange={(e) => setValueSubTask(e.target.value)} value={valueSubTask}></textarea> 
           <StyledButtons>
-           <FaPlus onClick={() => insertSubTask(valueSubTask)} />
+          <FaPlus onClick={() => insertSubTask(valueSubTask)} />
           </StyledButtons>
-         </Step>
+        </Step>
 
-         <ContainerSubTasks>
+        <ContainerSubTasks>
           {
             subTasks.map((task, index) => (
               <SubTasks key={index}>
-                <input type="checkbox"  name="" id="" />
+                <input type="checkbox" name="" id="" />
                 <p>{task.subtask}</p>
-                <StyledButtons><FaPencilAlt/></StyledButtons>
-                <StyledButtons><FaTrashAlt/></StyledButtons>
+                <StyledButtons onClick={() => deleteSubTasks(index)}><FaTrashAlt/></StyledButtons>
               </SubTasks>
             ))
           }
-         </ContainerSubTasks>
+        </ContainerSubTasks>
 
         <ContainerButtons>
           <StyledButtons onClick={() => setModalOn(false)}>
